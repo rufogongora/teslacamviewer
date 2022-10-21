@@ -9,7 +9,7 @@ using teslacamviewer.web.Data;
 namespace teslacamviewer.web.Migrations
 {
     [DbContext(typeof(TeslaContext))]
-    [Migration("20221021005204_addedTeslaFolders")]
+    [Migration("20221021012949_addedTeslaFolders")]
     partial class addedTeslaFolders
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace teslacamviewer.web.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.7");
 
-            modelBuilder.Entity("teslacamviewer.Data.DataModels.Favorite", b =>
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.Favorite", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,23 +33,6 @@ namespace teslacamviewer.web.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Favorites");
-                });
-
-            modelBuilder.Entity("teslacamviewer.Data.DataModels.TeslaConfig", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Salt")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TeslaConfigs");
                 });
 
             modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaClip", b =>
@@ -78,6 +61,23 @@ namespace teslacamviewer.web.Migrations
                     b.HasIndex("TeslaFolderId");
 
                     b.ToTable("TeslaClips");
+                });
+
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Salt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeslaConfigs");
                 });
 
             modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaEvent", b =>

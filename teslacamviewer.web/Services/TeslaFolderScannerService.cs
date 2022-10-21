@@ -11,7 +11,7 @@ namespace teslacamviewer.web.Services
 {
     public interface ITeslaFolderScannerService
     {
-
+        Task ScanTeslaFolders();
     }
 
     public class TeslaFolderScannerService : ITeslaFolderScannerService
@@ -47,7 +47,9 @@ namespace teslacamviewer.web.Services
                     ActualPath = x.ActualPath,
                     HardDeleted = false,
                     SoftDeleted = false,
-                    TeslaClips = x.TeslaClips.Select(y => PhysicalTeslaClipToTeslaClip(y))
+                    TeslaClips = x.TeslaClips.Select(y => PhysicalTeslaClipToTeslaClip(y)).ToList(),
+                    TeslaEvent = x.TeslaEvent != null ? PhysicalTeslaEventToTeslaEvent(x.TeslaEvent) : null,
+                    Thumbnail = x.Thumbnail
                 });
 
             // insert the newly added folders

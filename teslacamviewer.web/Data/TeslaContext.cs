@@ -19,12 +19,7 @@ namespace teslacamviewer.web.Data
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            var useSqlite = _config.GetValue<bool>("useSqlite");
-            if (useSqlite) {
-                optionsBuilder.UseSqlite(_config["connectionString"]);
-            } else {
-                optionsBuilder.UseSqlServer(_config["connectionString"]);
-            }
+             optionsBuilder.UseSqlite(_config["connectionString"]);
         }
     }
 }
