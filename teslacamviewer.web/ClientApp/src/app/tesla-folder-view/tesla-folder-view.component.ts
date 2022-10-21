@@ -37,7 +37,7 @@ export class TeslaFolderViewComponent implements OnInit {
       this.teslaFolderService.getTeslaFolder(folderName, folderType)
       .subscribe(res => {
         this.teslaFolder = res;
-        this.open(res.teslaClipsGroupedByDate[0]);
+        this.open(res.teslaClipGroups[0].teslaClips);
       }, (err) => {
         this.error = true;
       }, () => {

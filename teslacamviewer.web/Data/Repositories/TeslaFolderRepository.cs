@@ -11,6 +11,7 @@ namespace teslacamviewer.web.Data.Repositories
         Task<IEnumerable<TeslaFolder>> GetTeslaFolders();
         Task DeleteTeslaFolders(IEnumerable<TeslaFolder> teslaFolders);
         Task AddTeslaFolders(IEnumerable<TeslaFolder> teslaFolders);
+        Task<TeslaFolder> GetTeslaFolder(string folderName, string folderType);
     }
     public class TeslaFolderRepository : ITeslaFolderRepository
     {
@@ -28,6 +29,15 @@ namespace teslacamviewer.web.Data.Repositories
                     .ThenInclude(tf => tf.TeslaClips)
                 .Include(tf => tf.TeslaEvent)
                 .ToListAsync();
+        }
+
+        public async Task<TeslaFolder> GetTeslaFolder(string folderName, string folderType)
+        {
+            return await _dbContext.TeslaFolders
+                .Include(tf => tf.TeslaClipGroups)
+                    .ThenInclude(tf => tf.TeslaClips)
+                .Include(tf => tf.TeslaEvent)
+                .FirstOrDefaultAsync(tf => tf.Name == folderName && tf.FolderType == folderType);
         }
 
         public async Task DeleteTeslaFolders(IEnumerable<TeslaFolder> teslaFolders)

@@ -24,5 +24,11 @@ namespace teslacamviewer.web.Controllers
         {
             return Ok(await _teslaFolderRepository.GetTeslaFolders());
         }
+
+        [HttpGet, Route("{folderType}/{folderName}")]
+        public async Task<IActionResult> GetTeslaFolder(string folderType, string folderName)
+        {
+            return Ok(await _teslaFolderRepository.GetTeslaFolder(folderName, folderType));
+        }
     }
 }

@@ -6,6 +6,6 @@ export class TeslaFolder {
     actualPath: string;
     thumbnail: boolean;
     teslaEvent: TeslaEvent;
-    TeslaClipGroups: TeslaClipGroup[];
+    teslaClipGroups: TeslaClipGroup[];
     folderType: string;
 }
