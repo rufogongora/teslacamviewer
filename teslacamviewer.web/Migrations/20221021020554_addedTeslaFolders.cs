@@ -49,6 +49,26 @@ namespace teslacamviewer.web.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TeslaClipsGroup",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    TeslaFolderId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TeslaClipsGroup", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TeslaClipsGroup_TeslaFolders_TeslaFolderId",
+                        column: x => x.TeslaFolderId,
+                        principalTable: "TeslaFolders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeslaClips",
                 columns: table => new
                 {
@@ -58,22 +78,27 @@ namespace teslacamviewer.web.Migrations
                     ActualPath = table.Column<string>(type: "TEXT", nullable: true),
                     DateTime = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Side = table.Column<int>(type: "INTEGER", nullable: false),
-                    TeslaFolderId = table.Column<int>(type: "INTEGER", nullable: true)
+                    TeslaClipsGroupId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TeslaClips", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TeslaClips_TeslaFolders_TeslaFolderId",
-                        column: x => x.TeslaFolderId,
-                        principalTable: "TeslaFolders",
+                        name: "FK_TeslaClips_TeslaClipsGroup_TeslaClipsGroupId",
+                        column: x => x.TeslaClipsGroupId,
+                        principalTable: "TeslaClipsGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TeslaClips_TeslaFolderId",
+                name: "IX_TeslaClips_TeslaClipsGroupId",
                 table: "TeslaClips",
+                column: "TeslaClipsGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TeslaClipsGroup_TeslaFolderId",
+                table: "TeslaClipsGroup",
                 column: "TeslaFolderId");
 
             migrationBuilder.CreateIndex(
@@ -86,6 +111,9 @@ namespace teslacamviewer.web.Migrations
         {
             migrationBuilder.DropTable(
                 name: "TeslaClips");
+
+            migrationBuilder.DropTable(
+                name: "TeslaClipsGroup");
 
             migrationBuilder.DropTable(
                 name: "TeslaFolders");

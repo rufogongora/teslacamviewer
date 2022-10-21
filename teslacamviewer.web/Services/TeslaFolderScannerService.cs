@@ -34,11 +34,15 @@ namespace teslacamviewer.web.Services
             var physicalFolders = _teslaFolderRepository.GetTeslaFolders();
 
             // now retrieve the folders that exist in the db
-            var dbFolders = await _dbContext.TeslaFolders.ToListAsync();
+            var dbFolders = await _dbContext.TeslaFolders
+                .Include(tf =>tf.TeslaEvent)
+                .Include(tf => tf.TeslaClipGroups)
+                    .ThenInclude(tcg => tcg.TeslaClips)
+                .ToListAsync();
 
             // get the list of folders that have not been persisted
             var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
-            
+
             // get newly added folders ready for insertion
             var newFoldersForInsertion = newFolders.Select(x =>
                 new TeslaFolder
@@ -47,16 +51,18 @@ namespace teslacamviewer.web.Services
                     ActualPath = x.ActualPath,
                     HardDeleted = false,
                     SoftDeleted = false,
-                    TeslaClips = x.TeslaClips.Select(y => PhysicalTeslaClipToTeslaClip(y)).ToList(),
+                    TeslaClipGroups = GroupTeslaClipsByDate(x.TeslaClips).ToList(),
                     TeslaEvent = x.TeslaEvent != null ? PhysicalTeslaEventToTeslaEvent(x.TeslaEvent) : null,
                     Thumbnail = x.Thumbnail
                 });
-
-            // insert the newly added folders
             _dbContext.TeslaFolders.AddRange(newFoldersForInsertion);
 
             // get the list of physical folders that have been deleted from the drive
             var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
+            _dbContext.RemoveRange(deletedFolders.SelectMany(df => df?.TeslaClipGroups).SelectMany(tcg => tcg?.TeslaClips));
+            _dbContext.RemoveRange(deletedFolders.SelectMany(df => df?.TeslaClipGroups));
+            _dbContext.RemoveRange(deletedFolders.Where(df => df.TeslaEvent != null).Select(df => df.TeslaEvent));
+            _dbContext.RemoveRange(deletedFolders);
 
             await _dbContext.SaveChangesAsync();
         }
@@ -65,7 +71,7 @@ namespace teslacamviewer.web.Services
         private static TeslaEvent PhysicalTeslaEventToTeslaEvent(PhysicalTeslaEvent physicalTeslaEvent)
         {
             return new TeslaEvent
-            {              
+            {
                 TimeStamp = physicalTeslaEvent.TimeStamp,
                 City = physicalTeslaEvent.City,
                 Est_Lat = physicalTeslaEvent.Est_Lat,
@@ -73,7 +79,7 @@ namespace teslacamviewer.web.Services
                 Reason = physicalTeslaEvent.Reason
             };
         }
-        
+
         private static TeslaClip PhysicalTeslaClipToTeslaClip(PhysicalTeslaClip physicalTeslaClip)
         {
             return new TeslaClip
@@ -83,6 +89,16 @@ namespace teslacamviewer.web.Services
                 DateTime = physicalTeslaClip.DateTime,
                 Side = physicalTeslaClip.Side,
             };
+        }
+
+        private static IEnumerable<TeslaClipsGroup> GroupTeslaClipsByDate(IEnumerable<PhysicalTeslaClip> physicalTeslaClips)
+        {
+            return physicalTeslaClips.GroupBy(tc => tc.DateTime)
+                .Select(grouping => new TeslaClipsGroup
+                {
+                    Name = grouping.Key?.ToString("yyyy-MM-dd"),
+                    TeslaClips = grouping.ToList().Select(physicalClip => PhysicalTeslaClipToTeslaClip(physicalClip)).ToList()
+                });
         }
 
         public static IEnumerable<TeslaFolder> GetHardDeletedFolders(IEnumerable<TeslaFolder> dbFolders, IEnumerable<PhysicalTeslaFolder> physicalFolders)

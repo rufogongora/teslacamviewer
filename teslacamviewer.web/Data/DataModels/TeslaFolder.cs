@@ -7,13 +7,11 @@ namespace teslacamviewer.web.Data.DataModels
 {
     public class TeslaFolder
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Name { get; set; }
         public string ActualPath { get; set; }
         public bool Thumbnail { get; set; }
-        public IEnumerable<TeslaClip> TeslaClips { get; set; }
+        public IEnumerable<TeslaClipsGroup> TeslaClipGroups { get; set; }
         public TeslaEvent TeslaEvent { get; set; }
         public bool SoftDeleted { get; set; }
         public bool HardDeleted { get; set; }

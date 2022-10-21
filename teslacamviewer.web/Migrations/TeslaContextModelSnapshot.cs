@@ -51,6 +51,25 @@ namespace teslacamviewer.web.Migrations
                     b.Property<int>("Side")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("TeslaClipsGroupId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeslaClipsGroupId");
+
+                    b.ToTable("TeslaClips");
+                });
+
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaClipsGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("TeslaFolderId")
                         .HasColumnType("INTEGER");
 
@@ -58,7 +77,7 @@ namespace teslacamviewer.web.Migrations
 
                     b.HasIndex("TeslaFolderId");
 
-                    b.ToTable("TeslaClips");
+                    b.ToTable("TeslaClipsGroup");
                 });
 
             modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaConfig", b =>
@@ -137,8 +156,15 @@ namespace teslacamviewer.web.Migrations
 
             modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaClip", b =>
                 {
-                    b.HasOne("teslacamviewer.web.Data.DataModels.TeslaFolder", null)
+                    b.HasOne("teslacamviewer.web.Data.DataModels.TeslaClipsGroup", null)
                         .WithMany("TeslaClips")
+                        .HasForeignKey("TeslaClipsGroupId");
+                });
+
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaClipsGroup", b =>
+                {
+                    b.HasOne("teslacamviewer.web.Data.DataModels.TeslaFolder", null)
+                        .WithMany("TeslaClipGroups")
                         .HasForeignKey("TeslaFolderId");
                 });
 
@@ -151,9 +177,14 @@ namespace teslacamviewer.web.Migrations
                     b.Navigation("TeslaEvent");
                 });
 
-            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaFolder", b =>
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaClipsGroup", b =>
                 {
                     b.Navigation("TeslaClips");
+                });
+
+            modelBuilder.Entity("teslacamviewer.web.Data.DataModels.TeslaFolder", b =>
+                {
+                    b.Navigation("TeslaClipGroups");
                 });
 #pragma warning restore 612, 618
         }
