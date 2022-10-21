@@ -15,8 +15,8 @@ namespace teslacamviewer.web.web.Controllers
 
         [HttpPost] 
         public async Task<IActionResult> Scan() {
-            var result = await _teslaScannerService.ScanTeslaFolders();
-            return Ok(result);
+            await _teslaScannerService.ScanTeslaFolders();
+            return Ok();
         }
     }
 }

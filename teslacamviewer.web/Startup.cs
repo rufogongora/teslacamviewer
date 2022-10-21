@@ -43,6 +43,7 @@ namespace teslacamviewer.web
             services.AddScoped<ITeslaClipsRepository, TeslaClipsRepository>();
             services.AddScoped<ITeslaFolderRepository, TeslaFolderRepository>();
             services.AddScoped<ITeslaConfigurationRepository, TeslaConfigurationRepository>();
+            services.AddScoped<ITeslaDataRepository, TeslaDataRepository>();
 
             //custom services
             services.AddScoped<ITeslaPhysicalFolderRepository, TeslaPhysicalFolderRepository>();

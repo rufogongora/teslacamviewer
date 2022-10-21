@@ -8,7 +8,7 @@ import { TeslaFolder } from '../models/TeslaFolder';
 })
 export class TeslaFolderService {
 
-  private readonly apiEndpoint = "api/teslaFolder";
+  private readonly apiEndpoint = "api/teslafolderv2";
 
   constructor(private http: HttpClient) { }
 

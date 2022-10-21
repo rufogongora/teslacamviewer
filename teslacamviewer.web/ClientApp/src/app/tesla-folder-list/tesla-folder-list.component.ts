@@ -7,6 +7,9 @@ import { ConfirmationModalComponent } from '../shared/confirmation-modal/confirm
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FavoritesService } from '../services/favorites/favorites.service';
 import { Favorite } from '../models/Favorite';
+import { TeslaDataService } from '../services/tesla-data-service/tesla-data.service';
+import { TeslaData } from '../models/TeslaData';
+import { TeslaScanningServiceService } from '../services/tesla-scanning-service/tesla-scanning-service.service';
 
 @Component({
   selector: 'app-tesla-folder-list',
@@ -20,15 +23,35 @@ export class TeslaFolderListComponent implements OnInit {
   search = "";
   orderByProperty = "name";
   favorites = [];
+  teslaData: TeslaData;
 
   constructor(
     private teslaFolderService: TeslaFolderService,
     private modalService: NgbModal,
-    private favoritesService: FavoritesService) { }
+    private favoritesService: FavoritesService,
+    private teslaDataService: TeslaDataService,
+    private teslaScanningService: TeslaScanningServiceService) { }
 
   ngOnInit() {
     this.getFolders();
     this.getFavorites();
+    this.getTeslaData();
+  }
+
+  getTeslaData() {
+    return this.teslaDataService.teslaData$.subscribe(res => {
+      this.teslaData = res;
+    });
+  }
+
+  startRescan() {
+    this.teslaScanningService.startRescan()
+      .subscribe(() => {
+        console.log('rescan started'); 
+        this.teslaDataService.loadTeslaData();
+      }, (err) => {
+        console.error(err);
+      });
   }
 
   changeOrderBy(property: string) {

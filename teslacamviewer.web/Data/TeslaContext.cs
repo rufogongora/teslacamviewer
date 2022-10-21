@@ -15,6 +15,7 @@ namespace teslacamviewer.web.Data
         public DbSet<TeslaEvent> TeslaEvents { get; set; }
         public DbSet<TeslaFolder> TeslaFolders { get; set; }
         public DbSet<TeslaClipsGroup> TeslaClipsGroups { get; set; }
+        public DbSet<TeslaData> TeslaDatas { get; set; }
         public TeslaContext(IConfiguration config) {
             _config = config;
         }

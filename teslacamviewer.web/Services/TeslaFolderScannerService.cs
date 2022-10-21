@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,27 +14,30 @@ namespace teslacamviewer.web.Services
 {
     public interface ITeslaFolderScannerService
     {
-        Task<ScanningResultContract> ScanTeslaFolders();
+        Task ScanTeslaFolders();
     }
 
     public class TeslaFolderScannerService : ITeslaFolderScannerService
     {
         private readonly ITeslaPhysicalFolderRepository _physicalTeslaFolderRepository;
         private readonly ITeslaFolderRepository _teslaFolderRepository;
+        private readonly ITeslaDataRepository _teslaDataRepository;
         private readonly ITeslaClipsRepository _teslaClipsRepository;
 
         //initialize constructor
         public TeslaFolderScannerService(
             ITeslaPhysicalFolderRepository physicalTeslaFolderRepository,
             ITeslaClipsRepository teslaClipsRepository,
-            ITeslaFolderRepository teslaFolderRepository)
+            ITeslaFolderRepository teslaFolderRepository,
+            ITeslaDataRepository teslaDataRepository)
         {
             _physicalTeslaFolderRepository = physicalTeslaFolderRepository;
             _teslaClipsRepository = teslaClipsRepository;
             _teslaFolderRepository = teslaFolderRepository;
+            _teslaDataRepository = teslaDataRepository;
         }
 
-        public async Task<ScanningResultContract> ScanTeslaFolders()
+        public async Task ScanTeslaFolders()
         {
             // first retrieve the physical folders
             var physicalFolders = _physicalTeslaFolderRepository.GetTeslaFolders();
@@ -42,21 +46,18 @@ namespace teslacamviewer.web.Services
             var dbFolders = await _teslaFolderRepository.GetTeslaFolders();
 
             // get the list of folders that have not been persisted
-            var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
+            //var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
 
             // get newly added folders ready for insertion
-            var newFoldersForInsertion = newFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x));
-            await _teslaFolderRepository.AddTeslaFolders(newFoldersForInsertion);
+            //var newFoldersForInsertion = newFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x));
+            await _teslaClipsRepository.DeleteClipsFromTeslaFolder(dbFolders);
+            await _teslaFolderRepository.DeleteTeslaFolders(dbFolders);
+
+            await _teslaFolderRepository.AddTeslaFolders(physicalFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x)));
 
             // get the list of physical folders that have been deleted from the drive
-            var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
-
-            var ids = deletedFolders.SelectMany(df => df?.TeslaClipGroups).SelectMany(tcg => tcg.TeslaClips).Select(tc => tc.Id);
-
-            await _teslaClipsRepository.DeleteClipsFromTeslaFolder(deletedFolders);
-            await _teslaFolderRepository.DeleteTeslaFolders(deletedFolders);
-
-            return new ScanningResultContract { FoldersAdded = newFolders.Count(), FoldersRemoved = deletedFolders.Count() };
+            //var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
+            await _teslaDataRepository.UpdateData(new TeslaData { LastRun = DateTime.Now });
         }
 
         private TeslaFolder PhysicalTeslaFolderToTeslaFolder(PhysicalTeslaFolder physicalTeslaFolder)
