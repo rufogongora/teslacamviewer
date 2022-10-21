@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using teslacamviewer.Data.DataModels;
+using teslacamviewer.web.Data.DataModels;
 
-namespace teslacamviewer.Data.Repositories
+namespace teslacamviewer.web.Data.Repositories
 {
     public interface IFavoritesRepository 
     {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace teslacamviewer.Contracts
+namespace teslacamviewer.web.Contracts
 {
     public class TeslaFolderContract
     {

@@ -1,4 +1,4 @@
-namespace teslacamviewer.Enums
+namespace teslacamviewer.web.Enums
 {
     public enum SideEnum
     {

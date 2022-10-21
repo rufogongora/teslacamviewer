@@ -1,4 +1,4 @@
-namespace teslacamviewer.ViewModels
+namespace teslacamviewer.web.ViewModels
 {
     public class LoginViewModel
     {

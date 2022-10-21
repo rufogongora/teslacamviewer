@@ -5,11 +5,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using teslacamviewer.Contracts;
-using teslacamviewer.Data.DataModels;
-using teslacamviewer.ViewModels;
+using teslacamviewer.web.Contracts;
+using teslacamviewer.web.Data.DataModels;
+using teslacamviewer.web.ViewModels;
 
-namespace teslacamviewer.Data.Repositories
+namespace teslacamviewer.web.Data.Repositories
 {
     public interface ITeslaConfigurationRepository
     {

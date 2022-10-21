@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using teslacamviewer.Enums;
+using teslacamviewer.web.Enums;
 
-namespace teslacamviewer.Models
+namespace teslacamviewer.web.Models
 {
-    public class TeslaClip
+    public class PhysicalTeslaClip
     {
         public string Name {get;set;}
         public string ActualPath {get;set;}

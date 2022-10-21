@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using teslacamviewer.Contracts;
-using teslacamviewer.Helpers;
-using teslacamviewer.Models;
-using teslacamviewer.Services;
+using teslacamviewer.web.Contracts;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.Models;
+using teslacamviewer.web.Services;
 
-namespace teslacamviewer.Controllers
+namespace teslacamviewer.web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

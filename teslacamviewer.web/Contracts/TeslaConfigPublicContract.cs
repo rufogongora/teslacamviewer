@@ -1,4 +1,4 @@
-﻿namespace teslacamviewer.Contracts
+﻿namespace teslacamviewer.web.Contracts
 {
     public class TeslaConfigPublicContract
     {

@@ -1,4 +1,4 @@
-namespace teslacamviewer.Data.DataModels
+namespace teslacamviewer.web.Data.DataModels
 {
     public class Favorite
     {

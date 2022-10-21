@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace teslacamviewer.Migrations
+namespace teslacamviewer.web.Migrations
 {
     public partial class InitialCreate : Migration
     {

@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using teslacamviewer.Data;
+using teslacamviewer.web.Data;
 
-namespace teslacamviewer.Migrations
+namespace teslacamviewer.web.Migrations
 {
     [DbContext(typeof(TeslaContext))]
     [Migration("20210713052742_InitialCreate")]

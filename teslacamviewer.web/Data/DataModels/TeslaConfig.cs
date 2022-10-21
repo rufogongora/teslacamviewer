@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace teslacamviewer.Data.DataModels
+namespace teslacamviewer.web.Data.DataModels
 {
     public class TeslaConfig
     {

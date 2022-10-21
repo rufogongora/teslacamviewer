@@ -3,13 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using teslacamviewer.Contracts;
-using teslacamviewer.Data.Repositories;
-using teslacamviewer.Helpers;
-using teslacamviewer.Services;
-using teslacamviewer.ViewModels;
+using teslacamviewer.web.Contracts;
+using teslacamviewer.web.Data.Repositories;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.Services;
+using teslacamviewer.web.ViewModels;
 
-namespace teslacamviewer.Controllers
+namespace teslacamviewer.web.Controllers
 {
     [Route("api/[controller]")]
     public class FavoritesController: Controller

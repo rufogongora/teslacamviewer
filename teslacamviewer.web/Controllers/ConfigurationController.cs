@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using teslacamviewer.Data.DataModels;
-using teslacamviewer.Data.Repositories;
-using teslacamviewer.Helpers;
-using teslacamviewer.ViewModels;
+using teslacamviewer.web.Data.DataModels;
+using teslacamviewer.web.Data.Repositories;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.ViewModels;
 
-namespace teslacamviewer.Controllers
+namespace teslacamviewer.web.Controllers
 {
     [Route("api/[controller]")]
     public class ConfigurationController: Controller

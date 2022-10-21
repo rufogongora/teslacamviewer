@@ -1,8 +1,8 @@
 using System;
 
-namespace teslacamviewer.Models
+namespace teslacamviewer.web.Models
 {
-    public class TeslaEvent
+    public class PhysicalTeslaEvent
     {
         public DateTime? TimeStamp {get;set;}
         public string City {get;set;}
