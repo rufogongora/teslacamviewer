@@ -10,5 +10,6 @@ namespace teslacamviewer.web.Data.DataModels
         public string ActualPath { get; set; }
         public DateTime? DateTime { get; set; }
         public SideEnum Side { get; set; }
+        public int TeslaClipGroupId { get; set; }
     }
 }

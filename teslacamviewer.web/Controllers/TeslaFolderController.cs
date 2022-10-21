@@ -16,12 +16,12 @@ namespace teslacamviewer.web.Controllers
     [Route("api/[controller]")]
     public class TeslaFolderController: ControllerBase
     {
-        private readonly ITeslaFolderRepository _teslaFolderRepository;
+        private readonly ITeslaPhysicalFolderRepository _teslaFolderRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         
         public TeslaFolderController(
-            ITeslaFolderRepository teslaFolderRepository,
+            ITeslaPhysicalFolderRepository teslaFolderRepository,
             IMapper mapper,
             IConfiguration config) {
             _teslaFolderRepository = teslaFolderRepository;

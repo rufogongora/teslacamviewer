@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using teslacamviewer.web.Contracts;
 using teslacamviewer.web.Data;
 using teslacamviewer.web.Data.DataModels;
+using teslacamviewer.web.Data.Repositories;
 using teslacamviewer.web.Models;
 
 
@@ -11,62 +13,66 @@ namespace teslacamviewer.web.Services
 {
     public interface ITeslaFolderScannerService
     {
-        Task ScanTeslaFolders();
+        Task<ScanningResultContract> ScanTeslaFolders();
     }
 
     public class TeslaFolderScannerService : ITeslaFolderScannerService
     {
+        private readonly ITeslaPhysicalFolderRepository _physicalTeslaFolderRepository;
         private readonly ITeslaFolderRepository _teslaFolderRepository;
-        private readonly TeslaContext _dbContext;
+        private readonly ITeslaClipsRepository _teslaClipsRepository;
 
         //initialize constructor
         public TeslaFolderScannerService(
-            ITeslaFolderRepository teslaFolderRepository,
-            TeslaContext dbContext)
+            ITeslaPhysicalFolderRepository physicalTeslaFolderRepository,
+            ITeslaClipsRepository teslaClipsRepository,
+            ITeslaFolderRepository teslaFolderRepository)
         {
+            _physicalTeslaFolderRepository = physicalTeslaFolderRepository;
+            _teslaClipsRepository = teslaClipsRepository;
             _teslaFolderRepository = teslaFolderRepository;
-            _dbContext = dbContext;
         }
 
-        public async Task ScanTeslaFolders()
+        public async Task<ScanningResultContract> ScanTeslaFolders()
         {
             // first retrieve the physical folders
-            var physicalFolders = _teslaFolderRepository.GetTeslaFolders();
+            var physicalFolders = _physicalTeslaFolderRepository.GetTeslaFolders();
 
             // now retrieve the folders that exist in the db
-            var dbFolders = await _dbContext.TeslaFolders
-                .Include(tf =>tf.TeslaEvent)
-                .Include(tf => tf.TeslaClipGroups)
-                    .ThenInclude(tcg => tcg.TeslaClips)
-                .ToListAsync();
+            var dbFolders = await _teslaFolderRepository.GetTeslaFolders();
 
             // get the list of folders that have not been persisted
             var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
 
             // get newly added folders ready for insertion
-            var newFoldersForInsertion = newFolders.Select(x =>
-                new TeslaFolder
-                {
-                    Name = x.Name,
-                    ActualPath = x.ActualPath,
-                    HardDeleted = false,
-                    SoftDeleted = false,
-                    TeslaClipGroups = GroupTeslaClipsByDate(x.TeslaClips).ToList(),
-                    TeslaEvent = x.TeslaEvent != null ? PhysicalTeslaEventToTeslaEvent(x.TeslaEvent) : null,
-                    Thumbnail = x.Thumbnail
-                });
-            _dbContext.TeslaFolders.AddRange(newFoldersForInsertion);
+            var newFoldersForInsertion = newFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x));
+            await _teslaFolderRepository.AddTeslaFolders(newFoldersForInsertion);
 
             // get the list of physical folders that have been deleted from the drive
             var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
-            _dbContext.RemoveRange(deletedFolders.SelectMany(df => df?.TeslaClipGroups).SelectMany(tcg => tcg?.TeslaClips));
-            _dbContext.RemoveRange(deletedFolders.SelectMany(df => df?.TeslaClipGroups));
-            _dbContext.RemoveRange(deletedFolders.Where(df => df.TeslaEvent != null).Select(df => df.TeslaEvent));
-            _dbContext.RemoveRange(deletedFolders);
 
-            await _dbContext.SaveChangesAsync();
+            var ids = deletedFolders.SelectMany(df => df?.TeslaClipGroups).SelectMany(tcg => tcg.TeslaClips).Select(tc => tc.Id);
+
+            await _teslaClipsRepository.DeleteClipsFromTeslaFolder(deletedFolders);
+            await _teslaFolderRepository.DeleteTeslaFolders(deletedFolders);
+
+            return new ScanningResultContract { FoldersAdded = newFolders.Count(), FoldersRemoved = deletedFolders.Count() };
         }
 
+        private TeslaFolder PhysicalTeslaFolderToTeslaFolder(PhysicalTeslaFolder physicalTeslaFolder)
+        {
+            return new TeslaFolder
+            {
+                Name = physicalTeslaFolder.Name,
+                ActualPath = physicalTeslaFolder.ActualPath,
+                HardDeleted = false,
+                SoftDeleted = false,
+                TeslaClipGroups = GroupTeslaClipsByDate(physicalTeslaFolder.TeslaClips).ToList(),
+                TeslaEvent = physicalTeslaFolder.TeslaEvent != null ? PhysicalTeslaEventToTeslaEvent(physicalTeslaFolder.TeslaEvent) : null,
+                Thumbnail = physicalTeslaFolder.Thumbnail,
+                FolderType = physicalTeslaFolder.FolderType
+            };
+        }
 
         private static TeslaEvent PhysicalTeslaEventToTeslaEvent(PhysicalTeslaEvent physicalTeslaEvent)
         {

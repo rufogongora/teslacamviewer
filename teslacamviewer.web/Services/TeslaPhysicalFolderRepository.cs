@@ -12,7 +12,7 @@ using teslacamviewer.web.Models;
 
 namespace teslacamviewer.web.Services
 {
-    public interface ITeslaFolderRepository 
+    public interface ITeslaPhysicalFolderRepository 
     {
         IEnumerable<PhysicalTeslaFolder> GetTeslaFolders();
         PhysicalTeslaFolder GetTeslaFolder(string folderName, string folderType);
@@ -20,13 +20,13 @@ namespace teslacamviewer.web.Services
         Task<byte[]> GetThumbnail(string folderName, string folderType);
         void DeleteTeslaFolder(string folderType, string folderName);
     }
-    public class TeslaFolderRepository : ITeslaFolderRepository
+    public class TeslaPhysicalFolderRepository : ITeslaPhysicalFolderRepository
     {
         private readonly IConfiguration _config;
         private readonly IFileSystem _fileSystem;
         private const string SENTRY_CLIPS_FOLDER_TYPE = "SentryClips";
         private const string SAVED_CLIPS_FOLDER_TYPE = "SavedClips";
-        public TeslaFolderRepository(
+        public TeslaPhysicalFolderRepository(
             IConfiguration config,
             IFileSystem fileSystem
             ) {

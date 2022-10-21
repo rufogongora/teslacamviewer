@@ -15,6 +15,7 @@ namespace teslacamviewer.web.Data.DataModels
         public TeslaEvent TeslaEvent { get; set; }
         public bool SoftDeleted { get; set; }
         public bool HardDeleted { get; set; }
-        
+        public string FolderType { get; set; }
+
     }
 }

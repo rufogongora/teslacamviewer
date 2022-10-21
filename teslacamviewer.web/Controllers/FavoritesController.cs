@@ -15,12 +15,12 @@ namespace teslacamviewer.web.Controllers
     public class FavoritesController: Controller
     {
         private readonly IFavoritesRepository _favoritesRepo;
-        private readonly ITeslaFolderRepository _teslaFolderRepository;
+        private readonly ITeslaPhysicalFolderRepository _teslaFolderRepository;
         private readonly IMapper _mapper;
 
         public FavoritesController(
             IFavoritesRepository favoritesRepo,
-            ITeslaFolderRepository teslaFolderRepository,
+            ITeslaPhysicalFolderRepository teslaFolderRepository,
             IMapper mapper
             ) 
         {

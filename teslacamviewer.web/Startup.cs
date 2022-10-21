@@ -35,12 +35,17 @@ namespace teslacamviewer.web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddDbContext<TeslaContext>();
 
-            //custom services
             services.AddScoped<IFileSystem, FileSystem>();
+
+            //db repos
+            services.AddDbContext<TeslaContext>();
+            services.AddScoped<ITeslaClipsRepository, TeslaClipsRepository>();
             services.AddScoped<ITeslaFolderRepository, TeslaFolderRepository>();
             services.AddScoped<ITeslaConfigurationRepository, TeslaConfigurationRepository>();
+
+            //custom services
+            services.AddScoped<ITeslaPhysicalFolderRepository, TeslaPhysicalFolderRepository>();
             services.AddScoped<ITeslaFolderScannerService, TeslaFolderScannerService>();
         }
 
