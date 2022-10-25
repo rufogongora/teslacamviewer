@@ -13,7 +13,7 @@ namespace teslacamviewer.web.Services
 {
     public interface ITeslaFolderScannerService
     {
-        Task ScanTeslaFolders();
+        Task<ScanningResultContract> ScanTeslaFolders();
     }
 
     public class TeslaFolderScannerService : ITeslaFolderScannerService
@@ -36,26 +36,48 @@ namespace teslacamviewer.web.Services
             _teslaDataRepository = teslaDataRepository;
         }
 
-        public async Task ScanTeslaFolders()
+
+        public async Task<ScanningResultContract> ScanTeslaFolders()
         {
-            // first retrieve the physical folders
             var physicalFolders = _physicalTeslaFolderRepository.GetTeslaFolders();
 
             // now retrieve the folders that exist in the db
             var dbFolders = await _teslaFolderRepository.GetTeslaFolders();
 
             // get the list of folders that have not been persisted
-            //var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
+            var newFolders = GetNewlyCreatedFolders(dbFolders, physicalFolders);
 
             // get newly added folders ready for insertion
-            //var newFoldersForInsertion = newFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x));
+            var newFoldersForInsertion = newFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x));
+            await _teslaFolderRepository.AddTeslaFolders(newFoldersForInsertion);
+
+            // get the list of physical folders that have been deleted from the drive
+            var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
+
+            var ids = deletedFolders.SelectMany(df => df?.TeslaClipGroups).SelectMany(tcg => tcg.TeslaClips).Select(tc => tc.Id);
+
+            await _teslaClipsRepository.DeleteClipsFromTeslaFolder(deletedFolders);
+            await _teslaFolderRepository.DeleteTeslaFolders(deletedFolders);
+
+            await _teslaDataRepository.UpdateData(new TeslaData { LastRun = DateTime.Now });
+
+            return new ScanningResultContract { FoldersAdded = newFolders.Count(), FoldersRemoved = deletedFolders.Count() };
+        }
+        
+
+        public async Task ScanButDeleteTeslaFolders()
+        {
+            // first retrieve the physical folders
+            var physicalFolders = _physicalTeslaFolderRepository.GetTeslaFolders();
+
+            // now retrieve the folders that exist in the db
+            var dbFolders = await _teslaFolderRepository.GetTeslaFolders();
+            
             await _teslaClipsRepository.DeleteClipsFromTeslaFolder(dbFolders);
             await _teslaFolderRepository.DeleteTeslaFolders(dbFolders);
 
             await _teslaFolderRepository.AddTeslaFolders(physicalFolders.Select(x => PhysicalTeslaFolderToTeslaFolder(x)));
 
-            // get the list of physical folders that have been deleted from the drive
-            //var deletedFolders = GetHardDeletedFolders(dbFolders, physicalFolders);
             await _teslaDataRepository.UpdateData(new TeslaData { LastRun = DateTime.Now });
         }
 
