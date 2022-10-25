@@ -8,8 +8,13 @@ namespace teslacamviewer.web.Data.Repositories
 {
     public interface IFavoritesRepository 
     {
-        Task<IEnumerable<Favorite>> GetFavorites();
-        Task ToggleFavorite(string name, string type);
+        Task ToggleClipFavorite(string name);
+
+        Task ToggleFolderFavorite(string name);
+
+        Task<IEnumerable<TeslaClip>> GetFavoriteClips();
+
+        Task<IEnumerable<TeslaFolder>> GetFavoriteFolders();
     }
     public class FavoritesRepository : IFavoritesRepository
     {
@@ -18,29 +23,35 @@ namespace teslacamviewer.web.Data.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<Favorite>> GetFavorites()
-        {
-            return await _context.Favorites.ToListAsync();
-        }
 
-        public async Task ToggleFavorite(string name, string type)
+        public async Task ToggleClipFavorite(string name)
         {
-            var fav = await GetFavorite(name, type);
-            if (fav == null) 
-            {
-                _context.Favorites.Add(new Favorite { Type = type, Name = name });
-            } else 
-            {
-                _context.Favorites.Remove(fav);
-            }
-             
+            var clip = await _context.TeslaClips.FirstOrDefaultAsync(tc => tc.Name == name);
+            clip.Favorite = !clip.Favorite;
+            await _context.SaveChangesAsync();
+        }
+        public async Task ToggleFolderFavorite(string name)
+        {
+            var folder = await _context.TeslaFolders.FirstOrDefaultAsync(tf => tf.Name == name);
+            folder.Favorite = !folder.Favorite;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Favorite> GetFavorite(string name, string type) 
+        public async Task<IEnumerable<TeslaClip>> GetFavoriteClips() 
         {
-            return await _context.Favorites.Where(f => f.Name == name && f.Type == type)
-            .FirstOrDefaultAsync();
+            return await _context.TeslaClips
+                .Where(c => c.Favorite)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<TeslaFolder>> GetFavoriteFolders()
+        {
+            return await _context.TeslaFolders
+                .Include(tf => tf.TeslaClipGroups)
+                    .ThenInclude(tf => tf.TeslaClips)
+                .Include(tf => tf.TeslaEvent)                 
+                .Where(f => f.Favorite)
+                .ToListAsync();
         }
     }
 }

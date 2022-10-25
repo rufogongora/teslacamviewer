@@ -22,35 +22,46 @@ export class TeslaFolderListComponent implements OnInit {
   error:string;
   search = "";
   orderByProperty = "name";
-  favorites = [];
   teslaData: TeslaData;
+  rescanning = false;
 
   constructor(
     private teslaFolderService: TeslaFolderService,
     private modalService: NgbModal,
-    private favoritesService: FavoritesService,
     private teslaDataService: TeslaDataService,
-    private teslaScanningService: TeslaScanningServiceService) { }
+    private teslaScanningService: TeslaScanningServiceService,
+    private favoriteService: FavoritesService) { }
 
   ngOnInit() {
-    this.getFolders();
-    this.getFavorites();
     this.getTeslaData();
+    this.teslaDataService.loadTeslaData();
   }
 
   getTeslaData() {
-    return this.teslaDataService.teslaData$.subscribe(res => {
+    const subscription = this.teslaDataService.teslaData$.subscribe(res => {
       this.teslaData = res;
+      const lastRun = new Date(this.teslaData.lastRun);
+      // if last run is more than 1 minute ago, rescan
+      if (lastRun.getTime() < (new Date().getTime() - 5 * 60 * 1000)) { 
+        this.rescanning = true;
+        this.startRescan();
+      } else {
+        this.getFolders();
+      }
+      
+      subscription.unsubscribe();
     });
   }
 
   startRescan() {
     this.teslaScanningService.startRescan()
       .subscribe(() => {
-        console.log('rescan started'); 
+        this.getTeslaData();
         this.teslaDataService.loadTeslaData();
       }, (err) => {
         console.error(err);
+      }, () => {
+        this.rescanning = false;
       });
   }
 
@@ -90,14 +101,14 @@ export class TeslaFolderListComponent implements OnInit {
   }
 
   getColorIfFavorite(tf : TeslaFolder) {
-    return this.favorites.find((f: Favorite) => f.name == tf.name && f.type == 'Folder') ? 'red': 'black';
+    return tf.favorite ? 'red' : 'black';
   }
 
   toggleFavorite(tf: TeslaFolder) {
     const newFav = { name: tf.name,  type: 'Folder'} as Favorite
-    this.favoritesService.toggleFavorite(newFav)
+    this.favoriteService.toggleFavoriteFolder(newFav)
     .subscribe(() => {
-      this.addOrRemoveFavorite(newFav);
+      tf.favorite = !tf.favorite;
     });
   }
 
@@ -111,22 +122,6 @@ export class TeslaFolderListComponent implements OnInit {
       this.error = err.error;
       return of;
     }));
-  }
-
-  private getFavorites() {
-    this.favoritesService.getFavorites()
-    .subscribe(favs => {
-      this.favorites = favs;
-    })
-  }
-
-  private addOrRemoveFavorite(favorite: Favorite) {
-    const fav = this.favorites.find(f => f.name == favorite.name && f.type == favorite.type);
-    if (!fav) {
-      this.favorites.push(favorite);
-    } else {
-      this.favorites.splice(this.favorites.indexOf(fav), 1);
-    }
   }
 
 }

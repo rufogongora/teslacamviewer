@@ -8,4 +8,5 @@ export class TeslaFolder {
     teslaEvent: TeslaEvent;
     teslaClipGroups: TeslaClipGroup[];
     folderType: string;
+    favorite: boolean;
 }

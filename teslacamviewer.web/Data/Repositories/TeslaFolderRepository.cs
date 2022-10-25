@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace teslacamviewer.web.Data.Repositories
         Task DeleteTeslaFolders(IEnumerable<TeslaFolder> teslaFolders);
         Task AddTeslaFolders(IEnumerable<TeslaFolder> teslaFolders);
         Task<TeslaFolder> GetTeslaFolder(string folderName, string folderType);
+        Task ToggleFavorite(string folderName, string folderType);
+        Task<IEnumerable<TeslaFolder>> GetFavorites();
     }
     public class TeslaFolderRepository : ITeslaFolderRepository
     {
@@ -24,20 +27,28 @@ namespace teslacamviewer.web.Data.Repositories
         
         public async Task<IEnumerable<TeslaFolder>> GetTeslaFolders()
         {
-            return await _dbContext.TeslaFolders
-                .Include(tf => tf.TeslaClipGroups)
-                    .ThenInclude(tf => tf.TeslaClips)
-                .Include(tf => tf.TeslaEvent)
+            return await GetTeslaFoldersWithChildrenAttached()
                 .ToListAsync();
         }
 
         public async Task<TeslaFolder> GetTeslaFolder(string folderName, string folderType)
         {
-            return await _dbContext.TeslaFolders
-                .Include(tf => tf.TeslaClipGroups)
-                    .ThenInclude(tf => tf.TeslaClips)
-                .Include(tf => tf.TeslaEvent)
+            return await GetTeslaFoldersWithChildrenAttached()
                 .FirstOrDefaultAsync(tf => tf.Name == folderName && tf.FolderType == folderType);
+        }
+
+        public async Task ToggleFavorite(string folderName, string folderType)
+        {
+            var teslaFolder = await GetTeslaFolder(folderName, folderType);
+            teslaFolder.Favorite = !teslaFolder.Favorite;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<TeslaFolder>> GetFavorites()
+        {
+            return await GetTeslaFoldersWithChildrenAttached()
+                .Where(tf => tf.Favorite)
+                .ToListAsync();
         }
 
         public async Task DeleteTeslaFolders(IEnumerable<TeslaFolder> teslaFolders)
@@ -52,6 +63,14 @@ namespace teslacamviewer.web.Data.Repositories
         {
             _dbContext.TeslaFolders.AddRange(teslaFolders);
             await _dbContext.SaveChangesAsync();
+        }
+
+        private IIncludableQueryable<TeslaFolder, TeslaEvent> GetTeslaFoldersWithChildrenAttached()
+        {
+            return _dbContext.TeslaFolders
+                .Include(tf => tf.TeslaClipGroups)
+                    .ThenInclude(tf => tf.TeslaClips)
+                .Include(tf => tf.TeslaEvent);
         }
     }
 }

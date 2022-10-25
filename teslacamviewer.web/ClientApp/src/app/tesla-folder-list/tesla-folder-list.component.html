@@ -1,3 +1,4 @@
+<div *ngIf="rescanning" class="alert alert-warning">Re-scanning in progress</div>
 <div *ngIf="teslaFolders$ | async as teslaFolders; else loadingError" class="card">
     <div class="card-header">
         <div class="row">

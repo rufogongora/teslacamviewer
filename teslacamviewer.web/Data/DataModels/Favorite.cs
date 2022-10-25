@@ -6,4 +6,10 @@ namespace teslacamviewer.web.Data.DataModels
         public string Name {get;set;}
         public string Type {get;set;}
     }
+
+    public enum FavoriteType
+    {
+        Folder,
+        Clip
+    }
 }

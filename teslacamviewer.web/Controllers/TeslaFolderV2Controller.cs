@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using teslacamviewer.web.Contracts;
 using teslacamviewer.web.Data.Repositories;
 using teslacamviewer.web.Helpers;
+using teslacamviewer.web.ViewModels;
 
 namespace teslacamviewer.web.Controllers
 {

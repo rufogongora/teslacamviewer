@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using teslacamviewer.web.Data;
 
 namespace teslacamviewer.web.Migrations
 {
     [DbContext(typeof(TeslaContext))]
-    partial class TeslaContextModelSnapshot : ModelSnapshot
+    [Migration("20221024223809_addedFavoriteColumn")]
+    partial class addedFavoriteColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +46,6 @@ namespace teslacamviewer.web.Migrations
 
                     b.Property<DateTime?>("DateTime")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("Favorite")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
