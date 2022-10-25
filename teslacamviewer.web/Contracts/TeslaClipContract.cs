@@ -1,5 +1,5 @@
 using System;
-using teslacamviewer.web.Enums;
+using teslacamviewer.data.Enums;
 
 namespace teslacamviewer.web.Contracts
 {

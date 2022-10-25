@@ -3,10 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using teslacamviewer.data.Models;
+using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Contracts;
-using teslacamviewer.web.Data;
-using teslacamviewer.web.Data.DataModels;
-using teslacamviewer.web.Data.Repositories;
 using teslacamviewer.web.Models;
 
 

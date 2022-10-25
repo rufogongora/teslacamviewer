@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using teslacamviewer.web.Data;
-using teslacamviewer.web.Data.Repositories;
+using teslacamviewer.data.Context;
+using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Helpers;
 using teslacamviewer.web.Services;
 
@@ -39,7 +39,10 @@ namespace teslacamviewer.web
             services.AddScoped<IFileSystem, FileSystem>();
 
             //db repos
-            services.AddDbContext<TeslaContext>();
+            services.AddDbContext<TeslaContext>(options => 
+                options.UseSqlite(Configuration["connectionString"], 
+                x => x.MigrationsAssembly("teslacamviewer.data")));
+            
             services.AddScoped<ITeslaClipsRepository, TeslaClipsRepository>();
             services.AddScoped<ITeslaFolderRepository, TeslaFolderRepository>();
             services.AddScoped<ITeslaConfigurationRepository, TeslaConfigurationRepository>();

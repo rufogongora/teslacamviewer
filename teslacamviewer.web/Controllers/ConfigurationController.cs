@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using teslacamviewer.web.Data.DataModels;
-using teslacamviewer.web.Data.Repositories;
+using Microsoft.Extensions.Configuration;
+using teslacamviewer.data.Models;
+using teslacamviewer.data.Repositories;
+using teslacamviewer.web.Contracts;
 using teslacamviewer.web.Helpers;
 using teslacamviewer.web.ViewModels;
 
@@ -11,17 +14,35 @@ namespace teslacamviewer.web.Controllers
     public class ConfigurationController: Controller
     {
         private readonly ITeslaConfigurationRepository _repo;
+        private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
+
         public ConfigurationController(
-            ITeslaConfigurationRepository repository
+            ITeslaConfigurationRepository repository,
+            IMapper mapper,
+            IConfiguration configuration
         ) 
         {
             _repo = repository;
+            _mapper = mapper;
+            _configuration = configuration;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get() 
         {
-            return Ok(await _repo.GetPublicConfig());
+            var config = await _repo.GetPublicConfig(); 
+            var result = _mapper.Map<TeslaConfigPublicContract>(config);
+            if (result == null)
+            {
+                result = new TeslaConfigPublicContract { ConfigExists = false };
+            }
+            else
+            {
+                result.ConfigExists = true;
+            }
+            result.IsAuthorizationEnabled = _configuration.GetValue<bool>("authorizationEnabled");
+            return Ok(result);
         }
 
         [HttpPost]
@@ -32,7 +53,7 @@ namespace teslacamviewer.web.Controllers
 
         [HttpPost, Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginViewModel login) {
-            var isValid = await _repo.Login(login);
+            var isValid = await _repo.Login(login.Password);
             if (isValid) {
                 return Ok(JwtMiddleware.generateJwtToken());
             }
@@ -46,7 +67,7 @@ namespace teslacamviewer.web.Controllers
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState.ValidationState);
             }
-            var validPassword = await _repo.ChangePassword(changePassword);
+            var validPassword = await _repo.ChangePassword(changePassword.Currentpassword, changePassword.Newpassword);
             return validPassword ? Ok() : BadRequest("Invalid password provided.");
         }
 

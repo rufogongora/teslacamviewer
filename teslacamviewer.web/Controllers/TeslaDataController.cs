@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using teslacamviewer.web.Data.Repositories;
+using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Helpers;
 
 namespace teslacamviewer.web.Controllers

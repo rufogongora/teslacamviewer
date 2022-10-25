@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using teslacamviewer.web.Enums;
+using teslacamviewer.data.Enums;
 using teslacamviewer.web.Models;
 
 namespace teslacamviewer.web.Helpers

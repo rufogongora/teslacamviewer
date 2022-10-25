@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Contracts;
-using teslacamviewer.web.Data.Repositories;
 using teslacamviewer.web.Helpers;
 using teslacamviewer.web.ViewModels;
 

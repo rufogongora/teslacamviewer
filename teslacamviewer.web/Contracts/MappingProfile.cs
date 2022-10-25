@@ -1,6 +1,6 @@
 using System.Linq;
 using AutoMapper;
-using teslacamviewer.web.Data.DataModels;
+using teslacamviewer.data.Models;
 using teslacamviewer.web.Models;
 
 namespace teslacamviewer.web.Contracts

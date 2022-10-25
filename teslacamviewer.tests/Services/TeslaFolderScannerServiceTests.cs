@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using System.Collections.Generic;
 using System.Linq;
-using teslacamviewer.web.Data.DataModels;
+using teslacamviewer.data.Models;
 using teslacamviewer.web.Models;
 using teslacamviewer.web.Services;
 using Xunit;
