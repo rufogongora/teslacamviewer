@@ -31,7 +31,7 @@
       "useSSL": true,
       "httpPort": 7543,
       "sslPort": 7544,
-      "dockerfileRunArguments": "-v E:\\TeslaCamTestData:/teslacamtestdata --env rootFolder=/teslacamtestdata --env SQLITEFOLDER=/"
+      "dockerfileRunArguments": "-v E:\\TeslaCamTestData:/teslacamtestdata -v E:\\sqlitedata:/sqlite --env rootFolder=/teslacamtestdata --env SQLITEFOLDER=/sqlite --env scanInMinutes=1"
     }
   }
 }

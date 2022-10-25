@@ -14,12 +14,12 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y build-essential
 
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
+COPY . .
+RUN dotnet restore "/app/teslacamviewer.web/teslacamviewer.web.csproj"
 
 # Copy everything else and build
 COPY ./ ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish "/app/teslacamviewer.web/teslacamviewer.web.csproj" -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:5.0

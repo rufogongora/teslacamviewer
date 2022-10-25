@@ -10,6 +10,7 @@ import { Favorite } from '../models/Favorite';
 import { TeslaDataService } from '../services/tesla-data-service/tesla-data.service';
 import { TeslaData } from '../models/TeslaData';
 import { TeslaScanningServiceService } from '../services/tesla-scanning-service/tesla-scanning-service.service';
+import { environment } from '../../environments/environment'; 
 
 @Component({
   selector: 'app-tesla-folder-list',
@@ -35,6 +36,7 @@ export class TeslaFolderListComponent implements OnInit {
   ngOnInit() {
     this.getTeslaData();
     this.teslaDataService.loadTeslaData();
+    console.log(environment.scanInMinutes);
   }
 
   getTeslaData() {
@@ -42,7 +44,7 @@ export class TeslaFolderListComponent implements OnInit {
       this.teslaData = res;
       const lastRun = new Date(this.teslaData.lastRun);
       // if last run is more than 1 minute ago, rescan
-      if (lastRun.getTime() < (new Date().getTime() - 5 * 60 * 1000)) { 
+      if (lastRun.getTime() < (new Date().getTime() - environment.scanInMinutes * 60 * 1000)) { 
         this.rescanning = true;
         this.startRescan();
       } else {

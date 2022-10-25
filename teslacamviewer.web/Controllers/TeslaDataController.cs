@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
+using teslacamviewer.data.Models;
 using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Helpers;
 
@@ -20,7 +22,12 @@ namespace teslacamviewer.web.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(await _teslaDataRepository.GetData());
+            var result = await _teslaDataRepository.GetData();
+            if (result == null)
+            {
+                return Ok(new TeslaData { LastRun = DateTime.Parse("03/27/1992 07:22:16") });
+            }
+            return Ok(result);
         }
     }
 }
