@@ -1,7 +1,6 @@
-import { ApplicationRef, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Favorite } from '../models/Favorite';
 import { FavoritesService } from '../services/favorites/favorites.service';
-import { TeslaFolderService } from '../services/tesla-folder.service';
 
 @Component({
   selector: 'app-favorites',

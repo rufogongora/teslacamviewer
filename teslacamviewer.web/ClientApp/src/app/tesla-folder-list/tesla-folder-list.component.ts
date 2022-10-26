@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { TeslaFolder } from '../models/TeslaFolder';
-import { TeslaFolderService } from '../services/tesla-folder.service';
-import { catchError } from 'rxjs/operators';
+import { catchError, debounce, debounceTime, map } from 'rxjs/operators';
 import { ConfirmationModalComponent } from '../shared/confirmation-modal/confirmation-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FavoritesService } from '../services/favorites/favorites.service';
@@ -11,6 +10,10 @@ import { TeslaDataService } from '../services/tesla-data-service/tesla-data.serv
 import { TeslaData } from '../models/TeslaData';
 import { TeslaScanningServiceService } from '../services/tesla-scanning-service/tesla-scanning-service.service';
 import { environment } from '../../environments/environment'; 
+import { TeslaFolderWithoutClips } from '../models/TeslaFolderWithoutClips';
+import { PaginatedResult } from '../models/PaginatedResult';
+import { TeslaFolderService } from '../services/tesla-folder-service/tesla-folder.service';
+import { FolderColumnEnum } from '../services/tesla-folder-service/columnEnum';
 
 @Component({
   selector: 'app-tesla-folder-list',
@@ -19,12 +22,14 @@ import { environment } from '../../environments/environment';
 })
 export class TeslaFolderListComponent implements OnInit {
 
-  teslaFolders$: Observable<TeslaFolder[]>;
+  teslaFolders$: Observable<PaginatedResult<TeslaFolderWithoutClips>>;
   error:string;
   search = "";
   orderByProperty = "name";
   teslaData: TeslaData;
   rescanning = false;
+  currentPage = 1;
+  searchChanged$ = new Subject<string>();
 
   constructor(
     private teslaFolderService: TeslaFolderService,
@@ -36,7 +41,12 @@ export class TeslaFolderListComponent implements OnInit {
   ngOnInit() {
     this.getTeslaData();
     this.teslaDataService.loadTeslaData();
-    console.log(environment.scanInMinutes);
+    this.searchChanged$
+      .pipe(debounceTime(500))
+      .subscribe(() => {
+        this.currentPage = 1;
+        this.getFolders();      
+     });
   }
 
   getTeslaData() {
@@ -85,6 +95,11 @@ export class TeslaFolderListComponent implements OnInit {
     return this.orderByProperty.indexOf("-") !== -1;
   }
 
+  changePage(page: number) {
+    this.currentPage = page;
+    this.getFolders();
+  }
+
   delete(tf: TeslaFolder) {
     const modalRef = this.modalService.open(ConfirmationModalComponent);
     modalRef.componentInstance.title = 'Confirm Deletion';
@@ -118,11 +133,15 @@ export class TeslaFolderListComponent implements OnInit {
     return new Date(`${directoryName.split("_")[0]}T00:00:00`);
   }
 
+  searchChanged(event: string) {
+    this.searchChanged$.next(event);
+  }
+
   private getFolders() {
-    this.teslaFolders$ = this.teslaFolderService.getTeslaFolders()
+    this.teslaFolders$ = this.teslaFolderService.getTeslaFolders(this.currentPage, FolderColumnEnum.Name, this.search)
     .pipe(catchError((err) => {
       this.error = err.error;
-      return of;
+      return new Observable<any>();
     }));
   }
 

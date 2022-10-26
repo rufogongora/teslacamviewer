@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, of, Subject } from 'rxjs';
 import { TeslaFolder } from '../models/TeslaFolder';
-import { TeslaFolderService } from '../services/tesla-folder.service';
 
 import { SideEnum } from '../enums/SideEnum';
 import { TeslaClip } from '../models/TeslaClip';
+import { TeslaFolderService } from '../services/tesla-folder-service/tesla-folder.service';
 
 @Component({
   selector: 'app-tesla-folder-view',

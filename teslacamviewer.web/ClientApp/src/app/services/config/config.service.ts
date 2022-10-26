@@ -11,6 +11,7 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 export class ConfigService {
 
   private readonly apiEndpoint = 'api/Configuration';
+
   authEnabled$: ReplaySubject<boolean> = new ReplaySubject<boolean>();
   constructor(private httpClient: HttpClient) {
     this.getConfig().subscribe(res => this.authEnabled$.next(res.isAuthorizationEnabled));

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using teslacamviewer.data.Enums;
 using teslacamviewer.data.Repositories;
 using teslacamviewer.web.Contracts;
 using teslacamviewer.web.Helpers;
@@ -20,10 +21,10 @@ namespace teslacamviewer.web.Controllers
             _teslaFolderRepository = teslaFolderRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetTeslaFolders()
+        [HttpGet, Route("paginate/{pageNumber}/{pageSize}/{orderBy}")]
+        public async Task<IActionResult> GetTeslaFolders([FromRoute] int pageNumber, [FromRoute] int pageSize, [FromRoute] FolderColumnEnum orderBy, [FromQuery] string search = "")
         {
-            return Ok(await _teslaFolderRepository.GetTeslaFolders());
+            return Ok(await _teslaFolderRepository.GetTeslaFoldersWithoutClips(pageNumber, pageSize, orderBy, search));
         }
 
         [HttpGet, Route("{folderType}/{folderName}")]
