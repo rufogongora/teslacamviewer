@@ -1,21 +1,21 @@
 using System.Linq;
 using AutoMapper;
-using teslacamviewer.Data.DataModels;
-using teslacamviewer.Models;
+using teslacamviewer.data.Models;
+using teslacamviewer.web.Models;
 
-namespace teslacamviewer.Contracts
+namespace teslacamviewer.web.Contracts
 {
     public class MappingProfile: Profile
     {
         public MappingProfile() {
-            CreateMap<TeslaFolder, TeslaFolderContract>()
+            CreateMap<PhysicalTeslaFolder, TeslaFolderContract>()
             .AfterMap(
                 (src, dest) => {
                      dest.TeslaClipsGroupedByDate = dest.TeslaClips.GroupBy(tc => tc.DateTime);
                 });
 
-            CreateMap<TeslaEvent, TeslaEventContract>();
-            CreateMap<TeslaClip, TeslaClipContract>();
+            CreateMap<PhysicalTeslaEvent, TeslaEventContract>();
+            CreateMap<PhysicalTeslaClip, TeslaClipContract>();
             CreateMap<TeslaConfig, TeslaConfigPublicContract>();
         }
     }

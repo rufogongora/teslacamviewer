@@ -21,9 +21,10 @@
         <tbody>
             <tr *ngFor="let tf of teslaFolders | folderFilter : search">
                 <td><a [routerLink]="['/folders/'+ tf.folderType + '/' + tf.name]">{{tf.name}}</a></td>
-                <td>{{(tf.teslaEvent ? tf.teslaEvent.reason : 'Event.json not available').replaceAll("_", " ")}}</td>
-                <td>{{tf.teslaClipsGroupedByDate.length}}</td>
-                <td>{{tf.teslaEvent?.timeStamp | date}}</td>
+                <td>{{(tf.teslaEvent ? tf.teslaEvent.reason : 'Event.json data not available').replaceAll("_", " ")}}
+                </td>
+                <td>{{tf.teslaClipGroups.length}}</td>
+                <td>{{(tf.teslaEvent ? tf.teslaEvent.timeStamp : convertDirectoryNameToDate(tf.name)) | date}}</td>
                 <td>{{tf.teslaEvent?.city}}</td>
                 <td><map-view *ngIf="tf.teslaEvent" [teslaEvent]="tf.teslaEvent" [id]="tf.name"></map-view></td>
                 <td><img style="width: 100%;"  [src]="tf.thumbnail ? 'api/teslafolder/get/thumbnail/'+tf.folderType+'/'+tf.name : '/assets/noimage.png'"/></td>

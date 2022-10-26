@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Favorite } from '../models/Favorite';
 import { TeslaFolder } from '../models/TeslaFolder';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { TeslaFolder } from '../models/TeslaFolder';
 })
 export class TeslaFolderService {
 
-  private readonly apiEndpoint = "api/teslaFolder";
+  private readonly apiEndpoint = "api/teslafolderv2";
 
   constructor(private http: HttpClient) { }
 

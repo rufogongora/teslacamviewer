@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
-using teslacamviewer.ViewModels;
+using teslacamviewer.web.ViewModels;
 
-namespace teslacamviewer.Helpers
+namespace teslacamviewer.web.Helpers
 {
     public class JwtMiddleware
     {

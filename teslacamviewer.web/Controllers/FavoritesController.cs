@@ -3,24 +3,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using teslacamviewer.Contracts;
-using teslacamviewer.Data.Repositories;
-using teslacamviewer.Helpers;
-using teslacamviewer.Services;
-using teslacamviewer.ViewModels;
+using teslacamviewer.data.Repositories;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.Services;
+using teslacamviewer.web.ViewModels;
 
-namespace teslacamviewer.Controllers
+namespace teslacamviewer.web.Controllers
 {
     [Route("api/[controller]")]
     public class FavoritesController: Controller
     {
         private readonly IFavoritesRepository _favoritesRepo;
-        private readonly ITeslaFolderRepository _teslaFolderRepository;
+        private readonly ITeslaPhysicalFolderRepository _teslaFolderRepository;
         private readonly IMapper _mapper;
 
         public FavoritesController(
             IFavoritesRepository favoritesRepo,
-            ITeslaFolderRepository teslaFolderRepository,
+            ITeslaPhysicalFolderRepository teslaFolderRepository,
             IMapper mapper
             ) 
         {
@@ -30,30 +29,32 @@ namespace teslacamviewer.Controllers
         }
 
         [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> Get() 
+        [HttpGet, Route("folders")]
+        public async Task<IActionResult> GetFavoriteFolders() 
         {
-            return Ok(await _favoritesRepo.GetFavorites());
+            return Ok(await _favoritesRepo.GetFavoriteFolders());
+        }
+        [Authorize]
+        [HttpGet, Route("clips")]
+        public async Task<IActionResult> GetFavoriteClips()
+        {
+            return Ok(await _favoritesRepo.GetFavoriteClips());
         }
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ToggleFavoriteViewModel favorite) 
+        [HttpPost, Route("folders")]
+        public async Task<IActionResult> PostFavoriteFolder([FromBody] ToggleFavoriteViewModel favorite) 
         {
-            await _favoritesRepo.ToggleFavorite(favorite.Name, favorite.Type);
+            await _favoritesRepo.ToggleFolderFavorite(favorite.Name);
             return Ok();
         }
 
         [Authorize]
-        [HttpGet, Route("folders")]
-        public async Task<IActionResult> GetFolders() 
+        [HttpPost, Route("clips")]
+        public async Task<IActionResult> PostFavoriteClip([FromBody] ToggleFavoriteViewModel favorite)
         {
-            var folders = _teslaFolderRepository.GetTeslaFolders();
-            var folderFilter = (await _favoritesRepo.GetFavorites()).Where(f => f.Type == "Folder").ToList();
-            var filteredFolders = folders.Where(f => folderFilter.Any(folder => folder.Name == f.Name)).ToList();
-            var result = _mapper.Map<List<TeslaFolderContract>>(filteredFolders);
-            result.ForEach(tf => tf.TeslaClips = null);
-            return Ok(result);
+            await _favoritesRepo.ToggleClipFavorite(favorite.Name);
+            return Ok();
         }
     }
 }

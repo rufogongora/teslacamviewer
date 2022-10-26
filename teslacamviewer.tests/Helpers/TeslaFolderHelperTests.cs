@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using teslacamviewer.Helpers;
+using teslacamviewer.web.Helpers;
 using Xunit;
 
-namespace teslacamviewer.tests.Helpers
+namespace teslacamviewer.web.tests.Helpers
 {
     public class TeslaFolderHelperTests
     {

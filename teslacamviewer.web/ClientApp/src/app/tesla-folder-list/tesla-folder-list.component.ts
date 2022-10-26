@@ -7,6 +7,10 @@ import { ConfirmationModalComponent } from '../shared/confirmation-modal/confirm
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FavoritesService } from '../services/favorites/favorites.service';
 import { Favorite } from '../models/Favorite';
+import { TeslaDataService } from '../services/tesla-data-service/tesla-data.service';
+import { TeslaData } from '../models/TeslaData';
+import { TeslaScanningServiceService } from '../services/tesla-scanning-service/tesla-scanning-service.service';
+import { environment } from '../../environments/environment'; 
 
 @Component({
   selector: 'app-tesla-folder-list',
@@ -19,16 +23,48 @@ export class TeslaFolderListComponent implements OnInit {
   error:string;
   search = "";
   orderByProperty = "name";
-  favorites = [];
+  teslaData: TeslaData;
+  rescanning = false;
 
   constructor(
     private teslaFolderService: TeslaFolderService,
     private modalService: NgbModal,
-    private favoritesService: FavoritesService) { }
+    private teslaDataService: TeslaDataService,
+    private teslaScanningService: TeslaScanningServiceService,
+    private favoriteService: FavoritesService) { }
 
   ngOnInit() {
-    this.getFolders();
-    this.getFavorites();
+    this.getTeslaData();
+    this.teslaDataService.loadTeslaData();
+    console.log(environment.scanInMinutes);
+  }
+
+  getTeslaData() {
+    const subscription = this.teslaDataService.teslaData$.subscribe(res => {
+      this.teslaData = res;
+      const lastRun = new Date(this.teslaData.lastRun);
+      // if last run is more than 1 minute ago, rescan
+      if (lastRun.getTime() < (new Date().getTime() - environment.scanInMinutes * 60 * 1000)) { 
+        this.rescanning = true;
+        this.startRescan();
+      } else {
+        this.getFolders();
+      }
+      
+      subscription.unsubscribe();
+    });
+  }
+
+  startRescan() {
+    this.teslaScanningService.startRescan()
+      .subscribe(() => {
+        this.getTeslaData();
+        this.teslaDataService.loadTeslaData();
+      }, (err) => {
+        console.error(err);
+      }, () => {
+        this.rescanning = false;
+      });
   }
 
   changeOrderBy(property: string) {
@@ -67,14 +103,14 @@ export class TeslaFolderListComponent implements OnInit {
   }
 
   getColorIfFavorite(tf : TeslaFolder) {
-    return this.favorites.find((f: Favorite) => f.name == tf.name && f.type == 'Folder') ? 'red': 'black';
+    return tf.favorite ? 'red' : 'black';
   }
 
   toggleFavorite(tf: TeslaFolder) {
     const newFav = { name: tf.name,  type: 'Folder'} as Favorite
-    this.favoritesService.toggleFavorite(newFav)
+    this.favoriteService.toggleFavoriteFolder(newFav)
     .subscribe(() => {
-      this.addOrRemoveFavorite(newFav);
+      tf.favorite = !tf.favorite;
     });
   }
 
@@ -88,22 +124,6 @@ export class TeslaFolderListComponent implements OnInit {
       this.error = err.error;
       return of;
     }));
-  }
-
-  private getFavorites() {
-    this.favoritesService.getFavorites()
-    .subscribe(favs => {
-      this.favorites = favs;
-    })
-  }
-
-  private addOrRemoveFavorite(favorite: Favorite) {
-    const fav = this.favorites.find(f => f.name == favorite.name && f.type == favorite.type);
-    if (!fav) {
-      this.favorites.push(favorite);
-    } else {
-      this.favorites.splice(this.favorites.indexOf(fav), 1);
-    }
   }
 
 }

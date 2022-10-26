@@ -1,4 +1,4 @@
-import { TeslaClip } from "./TeslaClip";
+import { TeslaClipGroup } from "./TeslaClipGroup";
 import { TeslaEvent } from "./TeslaEvent";
 
 export class TeslaFolder {
@@ -6,6 +6,7 @@ export class TeslaFolder {
     actualPath: string;
     thumbnail: boolean;
     teslaEvent: TeslaEvent;
-    teslaClipsGroupedByDate: TeslaClip[][];
+    teslaClipGroups: TeslaClipGroup[];
     folderType: string;
+    favorite: boolean;
 }

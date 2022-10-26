@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using teslacamviewer.Data;
-using teslacamviewer.Data.Repositories;
-using teslacamviewer.Helpers;
-using teslacamviewer.Services;
+using teslacamviewer.data.Context;
+using teslacamviewer.data.Repositories;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.Services;
 
-namespace teslacamviewer
+namespace teslacamviewer.web
 {
     public class Startup
     {
@@ -27,7 +28,6 @@ namespace teslacamviewer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<ITeslaFolderRepository, TeslaFolderRepository>();
             services.AddScoped<IFavoritesRepository, FavoritesRepository>();
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -35,8 +35,22 @@ namespace teslacamviewer
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddDbContext<TeslaContext>();
+
+            services.AddScoped<IFileSystem, FileSystem>();
+
+            //db repos
+            services.AddDbContext<TeslaContext>(options => 
+                options.UseSqlite(Configuration["connectionString"], 
+                x => x.MigrationsAssembly("teslacamviewer.data")));
+            
+            services.AddScoped<ITeslaClipsRepository, TeslaClipsRepository>();
+            services.AddScoped<ITeslaFolderRepository, TeslaFolderRepository>();
             services.AddScoped<ITeslaConfigurationRepository, TeslaConfigurationRepository>();
+            services.AddScoped<ITeslaDataRepository, TeslaDataRepository>();
+
+            //custom services
+            services.AddScoped<ITeslaPhysicalFolderRepository, TeslaPhysicalFolderRepository>();
+            services.AddScoped<ITeslaFolderScannerService, TeslaFolderScannerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

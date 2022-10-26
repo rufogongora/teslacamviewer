@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  scanInMinutes: 5, // how often to rescan the teslausb filesystem for new files
 };
 
 /*

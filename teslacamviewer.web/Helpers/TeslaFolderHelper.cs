@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using teslacamviewer.Enums;
-using teslacamviewer.Models;
+using teslacamviewer.data.Enums;
+using teslacamviewer.web.Models;
 
-namespace teslacamviewer.Helpers
+namespace teslacamviewer.web.Helpers
 {
     public static class TeslaFolderHelper
     {

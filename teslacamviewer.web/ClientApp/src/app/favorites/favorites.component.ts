@@ -1,6 +1,7 @@
 import { ApplicationRef, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Favorite } from '../models/Favorite';
 import { FavoritesService } from '../services/favorites/favorites.service';
+import { TeslaFolderService } from '../services/tesla-folder.service';
 
 @Component({
   selector: 'app-favorites',
@@ -12,18 +13,17 @@ export class FavoritesComponent implements OnInit {
   teslaFolders = [];
   search = '';
   constructor(
-    private favoritesService: FavoritesService,
-    private changeDetectorRef: ChangeDetectorRef) { }
+    private favoriteService: FavoritesService) { }
 
   ngOnInit() {
-    this.favoritesService.getFavoriteFolders()
+    this.favoriteService.getFavoriteFolders()
     .subscribe(res => {
       this.teslaFolders = res;
     });
   }
 
   toggleFavorite(name: string, type:string) {
-    this.favoritesService.toggleFavorite({ name: name, type: type } as Favorite)
+    this.favoriteService.toggleFavoriteFolder({ name: name, type: type } as Favorite)
     .subscribe(() => {
       if (type === 'Folder') {
         const folderToUnfav = this.teslaFolders.find(f => f.name === name);

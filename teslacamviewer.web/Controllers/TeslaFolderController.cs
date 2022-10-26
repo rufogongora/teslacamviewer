@@ -5,23 +5,23 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using teslacamviewer.Contracts;
-using teslacamviewer.Helpers;
-using teslacamviewer.Models;
-using teslacamviewer.Services;
+using teslacamviewer.web.Contracts;
+using teslacamviewer.web.Helpers;
+using teslacamviewer.web.Models;
+using teslacamviewer.web.Services;
 
-namespace teslacamviewer.Controllers
+namespace teslacamviewer.web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class TeslaFolderController: ControllerBase
     {
-        private readonly ITeslaFolderRepository _teslaFolderRepository;
+        private readonly ITeslaPhysicalFolderRepository _teslaFolderRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         
         public TeslaFolderController(
-            ITeslaFolderRepository teslaFolderRepository,
+            ITeslaPhysicalFolderRepository teslaFolderRepository,
             IMapper mapper,
             IConfiguration config) {
             _teslaFolderRepository = teslaFolderRepository;

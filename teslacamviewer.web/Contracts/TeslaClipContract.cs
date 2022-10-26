@@ -1,7 +1,7 @@
 using System;
-using teslacamviewer.Enums;
+using teslacamviewer.data.Enums;
 
-namespace teslacamviewer.Contracts
+namespace teslacamviewer.web.Contracts
 {
     public class TeslaClipContract
     {
