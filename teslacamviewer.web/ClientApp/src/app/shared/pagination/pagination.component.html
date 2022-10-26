@@ -1,0 +1,11 @@
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+      <li [ngClass]="{'disabled': currentPage == 1}" class="page-item"><span style="cursor: pointer;" class="page-link" >Previous</span></li>
+      <ng-container *ngFor="let _ of [].constructor(totalPages); let i = index">
+        <li (click)="changePage(i+1)" [ngClass]="{'active': currentPage == i+1}" class="page-item">
+            <span style="cursor: pointer;" class="page-link">{{i+1}}</span>
+        </li>
+       </ng-container>
+      <li [ngClass]="{'disabled': currentPage == totalPages}" style="cursor: pointer;" class="page-item"><span class="page-link" >Next</span></li>
+    </ul>
+  </nav>

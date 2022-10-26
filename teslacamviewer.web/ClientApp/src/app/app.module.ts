@@ -27,6 +27,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { ConfirmationModalComponent } from './shared/confirmation-modal/confirmation-modal.component';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FavoritesComponent } from './favorites/favorites.component';
+import { PaginationComponent } from './shared/pagination/pagination.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { FavoritesComponent } from './favorites/favorites.component';
     SettingsComponent,
     ConfirmationModalComponent,
     FavoritesComponent,
+    PaginationComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

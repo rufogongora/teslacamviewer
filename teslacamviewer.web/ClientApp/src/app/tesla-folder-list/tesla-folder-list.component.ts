@@ -30,6 +30,7 @@ export class TeslaFolderListComponent implements OnInit {
   rescanning = false;
   currentPage = 1;
   searchChanged$ = new Subject<string>();
+  pageChanged$ = new Subject<number>();
 
   constructor(
     private teslaFolderService: TeslaFolderService,
@@ -47,6 +48,10 @@ export class TeslaFolderListComponent implements OnInit {
         this.currentPage = 1;
         this.getFolders();      
      });
+
+     this.pageChanged$.subscribe(page => {
+        this.changePage(page);
+     })
   }
 
   getTeslaData() {

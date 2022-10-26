@@ -20,17 +20,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-end">
-                      <li [ngClass]="{'disabled': currentPage == 1}" class="page-item"><span style="cursor: pointer;" class="page-link" >Previous</span></li>
-                      <ng-container *ngFor="let _ of [].constructor(teslaFolderWrapper.teslaFolders?.totalPages); let i = index">
-                        <li (click)="changePage(i+1)" [ngClass]="{'active': currentPage == i+1}" class="page-item">
-                            <span style="cursor: pointer;" class="page-link">{{i+1}}</span>
-                        </li>
-                       </ng-container>
-                      <li [ngClass]="{'disabled': currentPage == teslaFolderWrapper.teslaFolders?.totalPages}" style="cursor: pointer;" class="page-item"><span class="page-link" >Next</span></li>
-                    </ul>
-                  </nav>
+                <app-pagination [totalPages]="teslaFolderWrapper.teslaFolders?.totalPages" [currentPage]="currentPage" [pageChanged$]="pageChanged$"></app-pagination>
             </div>
         </div>       
     </div>
